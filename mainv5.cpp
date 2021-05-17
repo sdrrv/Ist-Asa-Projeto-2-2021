@@ -155,7 +155,24 @@ void initPreFlow(std::list<int>& _queue ){
 
 
 void discharge(int v){
-
+    Vertex& currentV = vertexes[v];
+    while(currentV.e > 0){
+        int aux = currentV.getAdjs()->front();
+        bool newHeight = true; 
+        for(Arc& arc : *(currentV.getArcs())){
+            if ( vertexes[arc.destId].h < currentV.h && costs[v][arc.destId] > 0 ){
+                pushFlow(v,arc.destId);
+                newHeight = false;
+                break;
+            }
+            else if ( vertexes[arc.destId].h < vertexes[aux].h && costs[v][arc.destId] > 0)
+                aux = arc.destId;
+        }
+        if (newHeight){
+            vertexes[v].h = vertexes[aux].h + 1;
+            pushFlow(v,aux);
+        }
+    }
 }
 
 

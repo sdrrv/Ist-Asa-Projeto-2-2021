@@ -144,17 +144,39 @@ void pushFlow(int v, int u){
 }
 
 
-void initPreFlow(){
+void initPreFlow(std::list<int>& _queue ){
     vertexes[0].h = vertexes.size();
     for (Arc& arc : *(vertexes[0].getArcs()) ){
-        pushFlow(0, arc.destId);    
+        pushFlow(0, arc.destId);
+        _queue.push_back(arc.destId);
     }
 }
 
 
-void relabelToFront(){
-    initPreFlow();
+
+void discharge(int v){
+
 }
+
+
+void relabelToFront(){
+    std::list<int> _queue;
+    initPreFlow(_queue);
+    std::list<int>::iterator iter = _queue.begin();
+    int oldHeight;
+    while (iter != _queue.end()){
+        oldHeight = vertexes[*iter].h;
+        discharge(*iter);
+        if(vertexes[*iter].h > oldHeight){
+            int value = *iter;
+            _queue.erase(iter);
+            _queue.push_front(value);
+            iter = _queue.begin();
+            iter++;
+        }
+    }
+}
+
 
 int main(){
     processInput();

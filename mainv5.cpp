@@ -132,10 +132,34 @@ int getRes(std::list<int>& l){
     return res;
 }
 
+
+void pushFlow(int v, int u){
+    int excess = vertexes[v].e;
+    int value = costs[v][u] <= excess || v == 0 ? costs[v][u] : excess;
+    costs[v][u] -= value;
+    costs[u][v] += value;
+    vertexes[v].e -= value;
+    vertexes[u].e += value;
+
+}
+
+
+void initPreFlow(){
+    vertexes[0].h = vertexes.size();
+    for (Arc& arc : *(vertexes[0].getArcs()) ){
+        pushFlow(0, arc.destId);    
+    }
+}
+
+
+void relabelToFront(){
+    initPreFlow();
+}
+
 int main(){
     processInput();
 
-    for (int i = 0; i < 6; i++){
+/*    for (int i = 0; i < 6; i++){
 
         std::list<Arc> alo = *(vertexes[i].adjs);
         std::list<Arc>::iterator it;
@@ -154,6 +178,6 @@ int main(){
     for(int x = 0; x < 6; x++){
         for(int j = 0; j < 6; j++)
             std::cout << "cost[" << x << "][" << j << "] = " << costs[x][j] << std::endl;
-    }
+    }*/
 }
  

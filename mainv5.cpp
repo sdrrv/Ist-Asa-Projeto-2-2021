@@ -8,6 +8,8 @@
 
 struct Vertex;
 
+typedef enum COLOR {WHITE, GRAY, BLACK} color; //enum COLOR that represents the color of the given vertex
+
 std::vector<std::vector<int>> costs;
 std::vector<Vertex> vertexes;
 
@@ -20,16 +22,25 @@ struct Arc{
 
 struct Vertex{
     int h, e;
+    color c;
     std::unique_ptr<std::list<Arc>> adjs;
     std::unique_ptr<std::list<int>> priorityQueue;
 
     Vertex()
-        : h(0), e(0),
+        : h(0), e(0), c(WHITE),
               adjs(new std::list<Arc>),
               priorityQueue(new std::list<int>) {}
 
     void createArc(int cap, int destId){
         adjs->push_back(Arc(cap, destId));
+    }
+
+    std::list<int>* getAdjs(){
+        return priorityQueue.get();
+    }
+
+    std::list<Arc>* getArcs(){
+        return adjs.get();
     }
 };
 
@@ -79,6 +90,46 @@ void processInput(){
 
     for (int i = 1; i < numVertexes + 1; i++)
         vertexes[i].priorityQueue->push_back(0);
+}
+
+std::list<int> BFS(){
+    std::list<int> vStack;
+    std::list<int> res;
+    vertexes[0].c = GRAY;
+    vStack.push_back(0);
+    int v;
+    while (!vStack.empty()) {
+        v = vStack.front();
+        res.push_back(v);
+        vStack.pop_front();
+        for (int u : (*(vertexes[v].getAdjs()))) {
+            if (vertexes[u].c == WHITE && costs[v][u] > 0){
+                vertexes[u].c = GRAY;
+                vStack.push_back(u);
+            }
+        }
+        vertexes[v].c = BLACK;
+    }
+    return res;
+}
+
+int getRes(std::list<int>& l){
+    bool belongs = false;
+    int res;
+    for(int v : l){
+        for (Arc& arc : (*(vertexes[v].getArcs()))){
+            for (int u : l){
+                if (u == arc.destId){
+                    belongs = true;
+                    break;
+                }
+            }
+            if (!belongs)
+                res += arc.cap;
+            belongs = false;
+        } 
+    }
+    return res;
 }
 
 int main(){

@@ -50,12 +50,12 @@ struct Vertex{
     }
 };
 
-void processInput(){
+void processInput(){ // will process the input given into the vertexes list and cost matrix.
     int numVertexes, numCosts;
-    scanf("%d %d", &numVertexes, &numCosts);
+    scanf("%d %d", &numVertexes, &numCosts); // Will recive the num os vertices and the number of connections.
 
     costs.reserve(numVertexes + 2);
-    for (int i = 0; i < numVertexes + 2; i++){
+    for (int i = 0; i < numVertexes + 2; i++){ // Creates the matrix costs
         costs.push_back(std::vector<int>());
         costs[i].reserve(numVertexes + 2);
         for (int j = 0; j < numVertexes + 2; j++)
@@ -63,12 +63,12 @@ void processInput(){
     }
 
    vertexes.reserve(numVertexes + 2);
-    for (int i = 0; i < numVertexes + 2; i++){
+    for (int i = 0; i < numVertexes + 2; i++){ // Creates the vertexes
         vertexes.push_back(Vertex());
     }
 
 
-    for (int i = 1; i <= numVertexes; i++){
+    for (int i = 1; i <= numVertexes; i++){ // Will populate the cost matrix, create the arcs between vertixes and create the connctions to the X and Y vertixes.
         int costx, costy;
         scanf("%d %d", &costx, &costy);
         vertexes[0].createArc(costx, i);
@@ -77,11 +77,14 @@ void processInput(){
         costs[0][i] = costx;
         costs[i][numVertexes + 1] = costy;
 
-        vertexes[0].priorityQueue->push_back(i);
         vertexes[i].priorityQueue->push_back(numVertexes + 1);
+        vertexes[0].priorityQueue->push_back(i);
     }
 
-    for (int i = 0; i < numCosts; i++){
+    for (int i = 1; i < numVertexes + 1; i++) // Will add the Vertex X to the priority Queue of all the vertexes.
+        vertexes[i].priorityQueue->push_back(0);
+
+    for (int i = 0; i < numCosts; i++){ // Will 
         int v1, v2, cost;
         scanf("%d %d %d", &v1, &v2, &cost);
         vertexes[v1].createArc(cost, v2);
@@ -94,8 +97,6 @@ void processInput(){
     }
 
 
-    for (int i = 1; i < numVertexes + 1; i++)
-        vertexes[i].priorityQueue->push_back(0);
 }
 
 

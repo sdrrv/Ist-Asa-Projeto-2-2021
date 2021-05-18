@@ -2,6 +2,7 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <ostream>
 #include <vector>
 #include <list>
 #include <stack>
@@ -96,40 +97,7 @@ void processInput(){
     for (int i = 1; i < numVertexes + 1; i++)
         vertexes[i].priorityQueue->push_back(0);
 }
-/*
-void BFS(){
-    std::list<int> vStack;
-    vertexes[0].c = GRAY;
-    vStack.push_back(0);
-    int v;
-    while (!vStack.empty()) {
-        v = vStack.front();
-        cutList.push_back(v);
-        cutHash.insert(v, v);
-        vStack.pop_front();
-        for (int u : (*(vertexes[v].getAdjs()))) {
-            if (vertexes[u].c == WHITE && costs[v][u] > 0){
-                vertexes[u].c = GRAY;
-                vStack.push_back(u);
-            }
-        }
-        vertexes[v].c = BLACK;
-    }
-}
 
-int getRes(){
-    int res = 0;
-    for(int v : cutList){
-        for (Arc& arc : (*(vertexes[v].getArcs()))){
-            if (cutHash.contains(arc.destId))
-                continue;
-            else
-                res += arc.cap;
-        }
-    }
-    return res;
-}
-*/
 
 void pushFlow(int v, int u){
     int excess = vertexes[v].e;
@@ -196,25 +164,8 @@ void relabelToFront(){
 int main(){
     processInput();
     relabelToFront();
-/*    for (int i = 0; i < 6; i++){
+    std::cout<< -vertexes[0].e << std::endl; // Podiamos tambem usar o numVertexes + 1.
+    
 
-        std::list<Arc> alo = *(vertexes[i].adjs);
-        std::list<Arc>::iterator it;
-        std::cout << "Vertice " << i << std::endl;
-        for (it = alo.begin(); it != alo.end(); ++it){
-            std::cout << it->cap << " ---- " << it->destId << std::endl;
-        }
-
-        std::cout << "Priority " << std::endl;
-        std::list<int> alo2 = *(vertexes[i].priorityQueue);
-        for (int& oioi : alo2){
-            std::cout << oioi << " ";
-        }
-        std::cout << std::endl;
-    }
-    for(int x = 0; x < 6; x++){
-        for(int j = 0; j < 6; j++)
-            std::cout << "cost[" << x << "][" << j << "] = " << costs[x][j] << std::endl;
-    }*/
 }
 

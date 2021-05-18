@@ -1,21 +1,13 @@
-#include <cstddef>
-#include <functional>
 #include <iostream>
 #include <memory>
-#include <ostream>
 #include <vector>
 #include <list>
-#include <stack>
-#include <string>
-#include <unordered_map>
 
 struct Vertex;
 
-typedef enum COLOR {WHITE, GRAY, BLACK} color; //enum COLOR that represents the color of the given vertex
 
 std::vector<std::vector<int>> costs;
 std::vector<Vertex> vertexes;
-std::unordered_map<int, int> cutHash;
 std::list<int> cutList;
 
 
@@ -28,12 +20,11 @@ struct Arc{
 
 struct Vertex{
     int h, e;
-    color c;
     std::unique_ptr<std::list<Arc>> adjs;
     std::unique_ptr<std::list<int>> priorityQueue;
 
     Vertex()
-        : h(0), e(0), c(WHITE),
+        : h(0), e(0),
               adjs(new std::list<Arc>),
               priorityQueue(new std::list<int>) {}
 

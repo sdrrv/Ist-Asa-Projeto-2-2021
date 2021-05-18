@@ -123,9 +123,9 @@ int getRes(){
         for (Arc& arc : (*(vertexes[v].getArcs()))){
             if (cutHash.contains(arc.destId))
                 continue;
-            else 
+            else
                 res += arc.cap;
-        } 
+        }
     }
     return res;
 }
@@ -156,15 +156,15 @@ void discharge(int v){
     Vertex& currentV = vertexes[v];
     while(currentV.e > 0){
         int aux = currentV.getAdjs()->front();
-        bool newHeight = true; 
-        for(Arc& arc : *(currentV.getArcs())){
-            if ( vertexes[arc.destId].h < currentV.h && costs[v][arc.destId] > 0 ){
-                pushFlow(v,arc.destId);
+        bool newHeight = true;
+        for(int& u : *(currentV.getAdjs())){
+            if ( vertexes[u].h < currentV.h && costs[v][u] > 0 ){
+                pushFlow(v, u);
                 newHeight = false;
                 break;
             }
-            else if ( vertexes[arc.destId].h < vertexes[aux].h && costs[v][arc.destId] > 0)
-                aux = arc.destId;
+            else if (costs[v][aux] <= 0 || (vertexes[u].h < vertexes[aux].h && costs[v][u] > 0))
+                aux = u;
         }
         if (newHeight){
             vertexes[v].h = vertexes[aux].h + 1;
@@ -187,15 +187,15 @@ void relabelToFront(){
             _queue.erase(iter);
             _queue.push_front(value);
             iter = _queue.begin();
-            iter++;
         }
+        iter++;
     }
 }
 
 
 int main(){
     processInput();
-
+    relabelToFront();
 /*    for (int i = 0; i < 6; i++){
 
         std::list<Arc> alo = *(vertexes[i].adjs);
@@ -217,4 +217,4 @@ int main(){
             std::cout << "cost[" << x << "][" << j << "] = " << costs[x][j] << std::endl;
     }*/
 }
- 
+

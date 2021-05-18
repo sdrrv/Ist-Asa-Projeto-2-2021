@@ -1,10 +1,12 @@
 #include <cstddef>
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <vector>
 #include <list>
 #include <stack>
 #include <string>
+#include <unordered_map>
 
 struct Vertex;
 
@@ -12,6 +14,9 @@ typedef enum COLOR {WHITE, GRAY, BLACK} color; //enum COLOR that represents the 
 
 std::vector<std::vector<int>> costs;
 std::vector<Vertex> vertexes;
+std::unordered_map<int, int> cutHash;
+std::list<int> cutList;
+
 
 struct Arc{
     int cap, destId;
@@ -92,15 +97,15 @@ void processInput(){
         vertexes[i].priorityQueue->push_back(0);
 }
 
-std::list<int> BFS(){
+void BFS(){
     std::list<int> vStack;
-    std::list<int> res;
     vertexes[0].c = GRAY;
     vStack.push_back(0);
     int v;
     while (!vStack.empty()) {
         v = vStack.front();
-        res.push_back(v);
+        cutList.push_back(v);
+        cutHash.insert(v, v);
         vStack.pop_front();
         for (int u : (*(vertexes[v].getAdjs()))) {
             if (vertexes[u].c == WHITE && costs[v][u] > 0){
@@ -110,23 +115,16 @@ std::list<int> BFS(){
         }
         vertexes[v].c = BLACK;
     }
-    return res;
 }
 
-int getRes(std::list<int>& l){
-    bool belongs = false;
-    int res;
-    for(int v : l){
+int getRes(){
+    int res = 0;
+    for(int v : cutList){
         for (Arc& arc : (*(vertexes[v].getArcs()))){
-            for (int u : l){
-                if (u == arc.destId){
-                    belongs = true;
-                    break;
-                }
-            }
-            if (!belongs)
+            if (cutHash.contains(arc.destId))
+                continue;
+            else 
                 res += arc.cap;
-            belongs = false;
         } 
     }
     return res;

@@ -8,7 +8,6 @@ struct Vertex;
 
 std::vector<std::vector<int>> costs;
 std::vector<Vertex> vertexes;
-std::list<int> cutList;
 
 
 struct Arc{
@@ -70,10 +69,11 @@ void processInput(){ // will process the input given into the vertexes list and 
 
         vertexes[i].priorityQueue->push_back(numVertexes + 1);
         vertexes[0].priorityQueue->push_back(i);
+        vertexes[i].priorityQueue->push_back(0);
     }
 
-    for (int i = 1; i < numVertexes + 1; i++) // Will add the Vertex X to the priority Queue of all the vertexes.
-        vertexes[i].priorityQueue->push_back(0);
+    /*for (int i = 1; i < numVertexes + 1; i++) // Will add the Vertex X to the priority Queue of all the vertexes.
+        vertexes[i].priorityQueue->push_back(0);*/
 
     for (int i = 0; i < numCosts; i++){ // Will 
         int v1, v2, cost;

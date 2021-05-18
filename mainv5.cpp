@@ -130,10 +130,73 @@ int getRes(){
     return res;
 }
 
+
+void pushFlow(int v, int u){
+    int excess = vertexes[v].e;
+    int value = costs[v][u] <= excess || v == 0 ? costs[v][u] : excess;
+    costs[v][u] -= value;
+    costs[u][v] += value;
+    vertexes[v].e -= value;
+    vertexes[u].e += value;
+
+}
+
+
+void initPreFlow(std::list<int>& _queue ){
+    vertexes[0].h = vertexes.size();
+    for (Arc& arc : *(vertexes[0].getArcs()) ){
+        pushFlow(0, arc.destId);
+        _queue.push_back(arc.destId);
+    }
+}
+
+
+
+void discharge(int v){
+    Vertex& currentV = vertexes[v];
+    while(currentV.e > 0){
+        int aux = currentV.getAdjs()->front();
+        bool newHeight = true; 
+        for(Arc& arc : *(currentV.getArcs())){
+            if ( vertexes[arc.destId].h < currentV.h && costs[v][arc.destId] > 0 ){
+                pushFlow(v,arc.destId);
+                newHeight = false;
+                break;
+            }
+            else if ( vertexes[arc.destId].h < vertexes[aux].h && costs[v][arc.destId] > 0)
+                aux = arc.destId;
+        }
+        if (newHeight){
+            vertexes[v].h = vertexes[aux].h + 1;
+            pushFlow(v,aux);
+        }
+    }
+}
+
+
+void relabelToFront(){
+    std::list<int> _queue;
+    initPreFlow(_queue);
+    std::list<int>::iterator iter = _queue.begin();
+    int oldHeight;
+    while (iter != _queue.end()){
+        oldHeight = vertexes[*iter].h;
+        discharge(*iter);
+        if(vertexes[*iter].h > oldHeight){
+            int value = *iter;
+            _queue.erase(iter);
+            _queue.push_front(value);
+            iter = _queue.begin();
+            iter++;
+        }
+    }
+}
+
+
 int main(){
     processInput();
 
-    for (int i = 0; i < 6; i++){
+/*    for (int i = 0; i < 6; i++){
 
         std::list<Arc> alo = *(vertexes[i].adjs);
         std::list<Arc>::iterator it;
@@ -152,6 +215,6 @@ int main(){
     for(int x = 0; x < 6; x++){
         for(int j = 0; j < 6; j++)
             std::cout << "cost[" << x << "][" << j << "] = " << costs[x][j] << std::endl;
-    }
+    }*/
 }
  

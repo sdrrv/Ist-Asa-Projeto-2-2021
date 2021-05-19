@@ -57,10 +57,7 @@ void processInput(){ // will process the input given into the vertexes list and 
         vertexes[i].priorityQueue->push_back(0);
     }
 
-    /*for (int i = 1; i < numVertexes + 1; i++) // Will add the Vertex X to the priority Queue of all the vertexes.
-        vertexes[i].priorityQueue->push_back(0);*/
-
-    for (int i = 0; i < numCosts; i++){ // Will
+    for (int i = 0; i < numCosts; i++){ // Will populate the adj vertixes of each vertex
         int v1, v2, cost;
         scanf("%d %d %d", &v1, &v2, &cost);
         costs[v1][v2] = cost;
@@ -74,7 +71,7 @@ void processInput(){ // will process the input given into the vertexes list and 
 }
 
 
-void pushFlow(int v, int u){
+void pushFlow(int v, int u){ // Will push the avalible flow trough vertexes
     int excess = vertexes[v].e;
     int value = costs[v][u] <= excess || v == 0 ? costs[v][u] : excess;
     costs[v][u] -= value;
@@ -85,7 +82,7 @@ void pushFlow(int v, int u){
 }
 
 
-void initPreFlow(std::list<int>& _queue ){
+void initPreFlow(std::list<int>& _queue ){ // Will send the inicial flux to all the vertexes, from the X vertex
     vertexes[0].h = vertexes.size();
     for (int& u : *(vertexes[0].getAdjs()) ){
         pushFlow(0, u);
@@ -94,30 +91,7 @@ void initPreFlow(std::list<int>& _queue ){
 }
 
 
-void discharge1(int v){
-    Vertex& currentV = vertexes[v];
-    std::list<int> prio;
-    for(int v : *(currentV.getAdjs()))
-        prio.push_back(v);
-
-    while(currentV.e > 0){
-        int aux = currentV.getAdjs()->front();
-        for(auto iter = prio.begin(); iter != prio.end(); iter++){
-            if (vertexes[*iter].h < currentV.h && costs[v][*iter] > 0 ){
-                pushFlow(v, *iter);
-                prio.erase(iter);
-            }
-            else if (costs[v][*iter] <= 0)
-                prio.erase(iter);
-            else if (costs[v][aux] <= 0 || (vertexes[*iter].h < vertexes[aux].h && costs[v][*iter] > 0))
-                aux = *iter;
-        }
-        vertexes[v].h = vertexes[aux].h + 1;
-        pushFlow(v,aux);
-    }
-}
-
-void discharge(int v){
+void discharge(int v){ // Will discharge the vertexes in the priorityQueue till they have flux 0.
     Vertex& currentV = vertexes[v];
     while(currentV.e > 0){
         int aux = currentV.getAdjs()->front();
@@ -137,7 +111,7 @@ void discharge(int v){
 }
 
 
-void relabelToFront(){
+void relabelToFront(){ // The relabel to front algorithm
     std::list<int> _queue;
     initPreFlow(_queue);
     std::list<int>::iterator iter = _queue.begin();
@@ -145,7 +119,7 @@ void relabelToFront(){
     while (iter != _queue.end()){
         oldHeight = vertexes[*iter].h;
         discharge(*iter);
-        f(vertexes[*iter].h > oldHeight){
+        if(vertexes[*iter].h > oldHeight){
             int value = *iter;
             _queue.erase(iter);
             _queue.push_front(value);
@@ -156,10 +130,10 @@ void relabelToFront(){
 }
 
 
-int main(){
-    processInput();
-    relabelToFront();
-    std::cout<< -vertexes[0].e << std::endl; // Podiamos tambem usar o numVertexes + 1.
+int main(){ // Main func
+    processInput(); //Process the Input
+    relabelToFront(); // Relabel To Front
+    std::cout<< -vertexes[0].e << std::endl; // Print the maxFlow / Result
 
 
 }
